@@ -1,4 +1,4 @@
-package com.revature.projectdept2.Services;
+package com.revature.projectdept2.services;
 
 public class Welcome {
 

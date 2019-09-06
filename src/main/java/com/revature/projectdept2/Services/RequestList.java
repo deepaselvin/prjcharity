@@ -1,4 +1,4 @@
-package com.revature.projectdept2.Services;
+package com.revature.projectdept2.services;
 
 
 import java.util.Scanner;
@@ -6,10 +6,7 @@ import java.util.Scanner;
 public class RequestList {
 	static Scanner scanner = new Scanner(System.in);
 	public static void req()throws Exception {
-	System.out.println("MAIN MENU \n "
-			+ "01 : CHILDRENS EDUCTAION \n"
-			+ "02:HEALTH & NUTRITION \n"
-			+ "03:LOG OUT");
+	System.out.println("MAIN MENU \n  01 : CHILDRENS EDUCTAION \n  02 : HEALTH & NUTRITION \n  03 : LOG OUT");
 	
 	int letter = scanner.nextInt();
 	

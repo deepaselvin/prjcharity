@@ -1,29 +1,34 @@
-package com.revature.projectdept2.Services;
+package com.revature.projectdept2.services;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+
 import java.util.Scanner;
 
-import com.revature.projectdept2.ConncetionUtil;
+import com.revature.projectdept2.dao.UserDAODetails;
+import com.revature.projectdept2.util.ConncetionUtil;
+
+
 
 public class Fundinfo {
 	public static int balance = 0;
+	static Scanner scanner = new Scanner(System.in);
 	static Connection con =ConncetionUtil.getconnection();
-	public static void fund() throws SQLException {
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Enter Request ");
-		String Request_need = sc.next();
-		
-		System.out.println("FUND NEEDED");
-		int Fund_needed = sc.nextInt();
-		balance = Fund_needed;
-		
-		String sql1 = "update employees set Fund_needed=? where Request_name=?";
-		PreparedStatement pst1 = con.prepareStatement(sql1);
-		pst1.setInt(1, Fund_needed);
-		pst1.setString(2, Request_need);
-		pst1.executeUpdate();
-
+	public static void fund() throws Exception {
+		try {
+			
+			System.out.println("Enter Request ");
+			String Request_need = scanner.next();
+			
+			System.out.println("FUND NEEDED");
+			int Fund_needed = scanner.nextInt();
+			balance = Fund_needed;
+			
+			
+			UserDAODetails.fundUpdate(Fund_needed, Request_need);
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			throw new Exception("FUND WAS NOT UPDATED");
+		}
 	}
 }

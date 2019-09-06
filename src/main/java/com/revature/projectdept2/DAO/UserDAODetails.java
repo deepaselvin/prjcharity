@@ -1,72 +1,79 @@
-package com.revature.projectdept2.DAO;
+package com.revature.projectdept2.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import com.revature.projectdept2.ConncetionUtil;
-import com.revature.projectdept2.Services.Fundinfo;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.revature.projectdept2.services.Fundinfo;
+import com.revature.projectdept2.util.ConncetionUtil;
+import com.revature.projectdept2.exception.DBException;
+import com.revature.projectdept2.model.RegUserDetails;
 
 public class UserDAODetails {
 
-	
+	public static int register(RegUserDetails User) throws SQLException, DBException {
 
-	public static void Register(String name, int phone_no, String role) throws SQLException {
-		
-		 Connection con = ConncetionUtil.getconnection();
-		
 		String sql = "insert into Users(name,phone_no,role) values (?,?,?)";
+		Connection con = ConncetionUtil.getconnection();
 		PreparedStatement pst = con.prepareStatement(sql);
-		pst.setString(1, name);
-		pst.setInt(2, phone_no);
-		pst.setString(3, role);
+		pst.setString(1, User.getName());
+		pst.setInt(2, User.getPhone_no());
+		pst.setString(3, User.getRole());
 		int rows = pst.executeUpdate();
-
+		return rows;
 	}
 
-	public static void Login(String enter_name, int enter_phn_no, String role) throws SQLException, ClassNotFoundException {
-		
-		 Connection con = ConncetionUtil.getconnection();
-		String sql = "select * from Users where name=? and phone_no=? and role=?";
-		PreparedStatement pst = con.prepareStatement(sql);
-		pst.setString(1, enter_name);
-		pst.setInt(2, enter_phn_no);
-		pst.setString(3, role);
-		ResultSet rs = pst.executeQuery();
-		
-		if (rs.next()) {
-			System.out.println("Login sucessfully");
-				}
-}
+	public static void login(String enter_name, int enter_phn_no, String role)
+			throws SQLException, ClassNotFoundException, DBException {
 
+		String sql = "select * from Users where name=? and phone_no=? and role=?";
+		try {
+			Connection con = ConncetionUtil.getconnection();
+			PreparedStatement pst = con.prepareStatement(sql);
+			pst.setString(1, enter_name);
+			pst.setInt(2, enter_phn_no);
+			pst.setString(3, role);
+			ResultSet rs = pst.executeQuery();
+
+			if (rs.next()) {
+				System.out.println("Login sucessfully");
+			}
+		} catch (SQLException e) {
+		
+			e.printStackTrace();
+			throw new DBException("unable to select");
+		}
+	}
+
+	
 	public static int depinfo(int accno) throws SQLException {
-		
-		 Connection con = ConncetionUtil.getconnection();
-		
+
+		Connection con = ConncetionUtil.getconnection();
 		String sql1 = "select Amount_Donated from employees where Request_no=?";
 		PreparedStatement pst11 = con.prepareStatement(sql1);
 		pst11.setInt(1, accno);
 		ResultSet rs = pst11.executeQuery();
 
-		// int balance=10000;//change this to admin control
+	
 		if (rs.next()) {
 			Fundinfo.balance = rs.getInt(1);
 		}
 
-		return Fundinfo.balance;// change to return balance
+		return Fundinfo.balance;
 
 	}
 
 	public static int requestInsert(String Request_need, int Deposit, int Request_no) throws SQLException {
-		
-		 Connection con = ConncetionUtil.getconnection();
-		
+
+		Connection con = ConncetionUtil.getconnection();
 		String sql = "insert into employees(Request_name,Amount_Donated,Request_no) values (?,?,?)";
 		PreparedStatement pst = con.prepareStatement(sql);
 		pst.setString(1, Request_need);
 		pst.setInt(2, Deposit);
 		pst.setInt(3, Request_no);
-		
 
 		int rows = pst.executeUpdate();
 		return rows;
@@ -75,8 +82,7 @@ public class UserDAODetails {
 
 	public static void requestUpdate(int totalBalance, String Request_need) throws SQLException {
 
-		 Connection con = ConncetionUtil.getconnection();
-		
+		Connection con = ConncetionUtil.getconnection();
 		String sql1 = "update employees set Amount_Donated=? where Request_need=?";
 		PreparedStatement pst1 = con.prepareStatement(sql1);
 		pst1.setInt(1, totalBalance);
@@ -85,27 +91,79 @@ public class UserDAODetails {
 
 	}
 
-	public static void fundinfo(int Fund_needed) throws SQLException {
-		
-		 Connection con = ConncetionUtil.getconnection();
-		
+	public static int fundinfo(int Fund_needed) throws SQLException {
+
+		Connection con = ConncetionUtil.getconnection();
 		String sql = "insert into employees(Fund_needed) values (?)";
 		PreparedStatement pst = con.prepareStatement(sql);
 		pst.setInt(1, Fund_needed);
 
 		int rows = pst.executeUpdate();
-
+		return rows;
 	}
 
-	public static void adFundinfo(int Fund_needed, String Request_need) throws SQLException {
+	public static void adFundinfo(int Fund_needed, int Request_no) throws SQLException {
 
-		 Connection con = ConncetionUtil.getconnection();
-		
-		String sql1 = "update employees set Fund_needed=? where Request_need=?";
+		Connection con = ConncetionUtil.getconnection();
+		String sql1 = "update employees set Fund_needed=? where Request_no=?";
 		PreparedStatement pst1 = con.prepareStatement(sql1);
 		pst1.setInt(1, Fund_needed);
-		pst1.setString(2, Request_need);
+		pst1.setInt(2, Request_no);
 		pst1.executeUpdate();
 
 	}
+
+	public static void fundUpdate(int fund_needed, String request_need) throws SQLException {
+		
+		Connection con = ConncetionUtil.getconnection();
+		String sql1 = "update employees set Fund_needed=? where Request_name=?";
+		PreparedStatement pst1 = con.prepareStatement(sql1);
+		pst1.setInt(1, fund_needed);
+		pst1.setString(2, request_need);
+		pst1.executeUpdate();
+	}
+
+	public static List<RegUserDetails> userRequest() throws SQLException {
+		
+		Connection con = ConncetionUtil.getconnection();
+		String sql1 = "select name,phone_no,role from Users ";
+		PreparedStatement pst11 = con.prepareStatement(sql1);
+		ResultSet rs = pst11.executeQuery();
+		List<RegUserDetails> list = new ArrayList<RegUserDetails>();
+		while (rs.next()) {
+			RegUserDetails us = toRow(rs);
+
+			list.add(us);
+		}
+		return list;
+	}
+
+	private static RegUserDetails toRow(ResultSet rs) throws SQLException {
+		
+		String name = rs.getString("name");
+		Integer phone_no = rs.getInt("phone_no");
+		String role = rs.getString("role");
+		RegUserDetails user = new RegUserDetails();
+		user.setName(name);
+		user.setPhone_no(phone_no);
+		user.setRole(role);
+		return user;
+	}
+
+	public static int fundUpdateAdmin(int totalBalance, String request_need) throws SQLException {
+		Connection con = ConncetionUtil.getconnection();
+		String sql1 = "insert into employees (Fund_needed,Request_name) values(?,?)";
+		PreparedStatement pst1 = con.prepareStatement(sql1);
+		pst1.setInt(1, totalBalance);
+		pst1.setString(2, request_need);
+		ResultSet rs = pst1.executeQuery();
+
+		if (rs.next()) {
+			Fundinfo.balance = rs.getInt(1);
+		}
+
+		return Fundinfo.balance;
+
+	}
+
 }

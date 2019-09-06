@@ -1,4 +1,4 @@
-package com.revature.projectdept2.Services;
+package com.revature.projectdept2.services;
 
 import java.sql.SQLException;
 import java.util.Scanner;

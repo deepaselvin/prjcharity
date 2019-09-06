@@ -1,10 +1,11 @@
-package com.revature.projectdept2.Services;
+package com.revature.projectdept2.services;
 
 import java.sql.Connection;
 import java.util.Scanner;
 
-import com.revature.projectdept2.ConncetionUtil;
-import com.revature.projectdept2.DAO.UserDAODetails;
+
+import com.revature.projectdept2.dao.UserDAODetails;
+import com.revature.projectdept2.util.ConncetionUtil;
 
 public class LoginCredits {
 	static Scanner scanner = new Scanner(System.in);
@@ -23,7 +24,7 @@ public class LoginCredits {
 	 	String role = scanner.next();
 	 	
 
-		UserDAODetails.Login(enter_name, enter_phn_no,role);
+		UserDAODetails.login(enter_name, enter_phn_no,role);
 		MainMenuList sh = new MainMenuList();
 		sh.show();
 
